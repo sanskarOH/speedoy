@@ -1,4 +1,4 @@
-module github.com/sanskarOH/speedT
+module github.com/sanskarOH/nutwrk
 
 go 1.24.4
 
