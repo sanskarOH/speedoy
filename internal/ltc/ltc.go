@@ -14,6 +14,8 @@ func Check(host string, attempts int, port string, timeout int) error {
 	var sum int
 	var avg int
 	var ipv4 string
+	var rtts []int64
+	var diffsum int
 
 	if err != nil {
 		return err
@@ -30,7 +32,7 @@ func Check(host string, attempts int, port string, timeout int) error {
 	if ipv4 == "" {
 		return fmt.Errorf("no IPV4 address found")
 	}
-	fmt.Printf("pinging %s [%s] on port %s\n", host, ipv4, port)
+	fmt.Printf("\nChecking latency on %s [%s] on port %s\n", host, ipv4, port)
 	// fmt.Printf("Resolved %s -> %s\n", host, ipv4)
 	address := net.JoinHostPort(ipv4, port)
 
@@ -39,6 +41,7 @@ func Check(host string, attempts int, port string, timeout int) error {
 		start := time.Now()
 		conn, err := net.DialTimeout("tcp", address, time.Duration(timeout)*time.Second)
 		elapsed := time.Since(start).Milliseconds()
+		rtts = append(rtts, elapsed)
 
 		if err != nil {
 			fmt.Printf("Connection Failed: (%v)\n ", err)
@@ -58,12 +61,36 @@ func Check(host string, attempts int, port string, timeout int) error {
 		avg = sum / recieved
 	}
 
+	for i := 1; i < len(rtts); i++ {
+
+		diff := rtts[i-1] - rtts[i]
+		if diff < 0 {
+			diff = -diff
+		}
+		diffsum = diffsum + int(diff)
+
+	}
+
+	jitter := float64(diffsum) / float64(len(rtts)-1)
+
 	if recieved > 0 {
-		fmt.Printf("Ping successful on %s Packets sent = %d Packets recieved = %d  Latency= %dms ", ipv4, attempts, recieved, avg)
+		fmt.Printf("Ping successful on %s \n", ipv4)
+		fmt.Println("--- LTC Statistics ---")
+
+		fmt.Printf("Packets Sent     : %d\n", attempts)
+		fmt.Printf("Packets Received : %d\n", recieved)
+		fmt.Printf("Packets Lost     : %d\n", lost)
+
+		lossPercent := float64(lost) / float64(attempts) * 100
+		fmt.Printf("Packet Loss      : %.1f%%\n\n", lossPercent)
+
+		fmt.Printf("Average RTT      : %dms\n", avg)
+		fmt.Printf("Jitter           : %.2fms\n", jitter)
 
 	} else {
 		fmt.Printf("Ping unsuccessful on %s Packets sent = %d Packets recieved = %d  Latency= %dms\n", ipv4, attempts, recieved, avg)
 		fmt.Printf("No response from service at TCP port %s .", port)
+
 	}
 
 	return nil

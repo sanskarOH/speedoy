@@ -140,10 +140,10 @@ go build -o nutwrk
 
 ## Usage
 
-### Ping a Host
+### Check latency of a Host
 
 ```bash
-nutwrk ping google.com
+nutwrk ltc google.com
 ```
 
 Example Output:
@@ -157,10 +157,10 @@ Latency: 14ms
 
 ---
 
-### Ping Multiple Times
+### check latency Multiple Times
 
 ```bash
-nutwrk ping google.com -c 5
+nutwrk ltc google.com -c 5
 ```
 
 Example Output:
@@ -190,8 +190,7 @@ Avg: 13.6ms
 
 ### Phase 2
 
-* [ ] Jitter Calculation
-* [ ] Statistical Analysis
+* [x] Jitter Calculation
 
 ### Phase 3
 
