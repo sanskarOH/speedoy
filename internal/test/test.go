@@ -46,11 +46,13 @@ func Check() error {
 
 	elapsedTime := time.Since(startTime).Seconds()
 
+	speed := float64(actual*8) / elapsedTime / 1000000
+
 	fmt.Printf("---Download Statistics---\n")
 	fmt.Printf("Bytes: %d", resp.ContentLength)
 	fmt.Printf("\nRecieved Actual: %d\n", actual)
 	fmt.Printf("Total Time: %.2fs", elapsedTime)
-	fmt.Printf("\nDownload Speed: %.2fs", elapsedTime)
+	fmt.Printf("\nDownload Speed: %.2fMbps", speed)
 
 	return nil
 }
