@@ -1,19 +1,36 @@
 package test
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"time"
 )
 
-func Check() error {
-	url := "https://proof.ovh.net/files/100Mb.dat"
+func selectServer(size string) (string, error) {
+	serverList := map[string]string{
+		"1mb":   "https://proof.ovh.net/files/1Mb.dat",
+		"10mb":  "https://proof.ovh.net/files/10Mb.dat",
+		"100mb": "https://proof.ovh.net/files/100Mb.dat",
+		"1gb":   "https://proof.ovh.net/files/1Gb.dat",
+	}
+	if serverList[size] == "" {
+		return "", errors.New("No server found")
+	}
+	return serverList[size], nil
+}
+
+func Check(size string) error {
+	url, err := selectServer(size)
+	if err != nil {
+		return fmt.Errorf("Server was not found")
+	}
 	var nr int
 	var buf []byte
 	var actual int
 	var milestone int
-	buf = make([]byte, 1024)
+	buf = make([]byte, 64*1024)
 	resp, err := http.Get(url)
 
 	if err != nil {
@@ -30,7 +47,7 @@ func Check() error {
 	fmt.Printf("Connected to the server successfully\n")
 	fmt.Printf("Status: %s\n", resp.Status)
 	startTime := time.Now()
-	milestone = 5
+	milestone = 25
 	for {
 
 		//read a chunk
@@ -46,7 +63,7 @@ func Check() error {
 
 		if progress >= milestone {
 			fmt.Printf("\nProgress: %d percent", milestone)
-			milestone += 5
+			milestone += 25
 		}
 
 	}
@@ -55,11 +72,11 @@ func Check() error {
 
 	speed := float64(actual*8) / elapsedTime / 1000000
 
-	fmt.Printf("---Download Statistics---\n")
+	fmt.Printf("\n\n---Download Statistics---\n")
 
-	fmt.Printf("Bytes: %d", resp.ContentLength)
-	fmt.Printf("\nRecieved Actual: %d\n", actual)
-	fmt.Printf("Total Time: %.2fs", elapsedTime)
+	fmt.Printf("File size: %.2f mb", (float64(resp.ContentLength) / (1024 * 1024)))
+	fmt.Printf("\nFile Downloaded: %.2f mb\n", (float64(actual) / (1024 * 1024)))
+	fmt.Printf("Total Time taken: %.2f s", elapsedTime)
 	fmt.Printf("\nDownload Speed: %.2f Mbps", speed)
 
 	return nil
