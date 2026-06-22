@@ -194,7 +194,7 @@ Avg: 13.6ms
 
 ### Phase 3
 
-* [ ] Download Speed Test
+* [x] Download Speed Test
 * [ ] Throughput Measurement
 
 ### Phase 4
