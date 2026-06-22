@@ -57,6 +57,175 @@ The project explores:
 
 ---
 
+# Installation & Usage
+
+## Download a Prebuilt Release
+
+1. Go to the Releases page.
+2. Download the archive for your operating system.
+3. Extract the archive.
+4. Run the executable.
+
+### Linux
+
+```bash
+chmod +x nutwrk
+./nutwrk --help
+```
+
+### Windows
+
+```powershell
+nutwrk.exe --help
+```
+
+### macOS
+
+```bash
+chmod +x nutwrk
+./nutwrk --help
+```
+
+---
+
+## Build From Source
+
+### Prerequisites
+
+- Go 1.24 or later
+- Git
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/sanskarOH/speedT.git
+cd speedT
+```
+
+### Install Dependencies
+
+```bash
+go mod tidy
+```
+
+### Build
+
+```bash
+go build -o nutwrk
+```
+
+### Run
+
+```bash
+./nutwrk --help
+```
+
+---
+
+# Commands
+
+## TCP Latency Check
+
+Measure TCP connection latency to a host.
+
+### Usage
+
+```bash
+nutwrk ltc <host> [flags]
+```
+
+### Flags
+
+| Flag | Description | Default |
+|--------|-------------|---------|
+| `-c` | Number of requests | `4` |
+| `-p` | Port | `443` |
+| `-t` | Timeout in seconds | `3` |
+
+### Examples
+
+```bash
+nutwrk ltc google.com
+```
+
+```bash
+nutwrk ltc google.com -c 10
+```
+
+```bash
+nutwrk ltc google.com -p 80
+```
+
+```bash
+nutwrk ltc google.com -c 5 -p 443 -t 2
+```
+
+---
+
+# Example Output
+
+```text
+Resolving google.com...
+
+PING google.com (142.250.182.142)
+
+Reply from 142.250.182.142: time=54ms
+Reply from 142.250.182.142: time=58ms
+Reply from 142.250.182.142: time=55ms
+Reply from 142.250.182.142: time=53ms
+
+--- Statistics ---
+Packets Sent:     4
+Packets Received: 4
+Packets Lost:     0
+Average Latency:  55ms
+```
+
+---
+
+# Development
+
+Run directly without building:
+
+```bash
+go run . ltc google.com
+```
+
+Run tests:
+
+```bash
+go test ./...
+```
+
+Format code:
+
+```bash
+go fmt ./...
+```
+
+---
+
+# Troubleshooting
+
+### Command Not Found
+
+Make sure the binary is executable:
+
+```bash
+chmod +x nutwrk
+```
+
+### Connection Timed Out
+
+Verify:
+
+- Internet connectivity
+- Hostname correctness
+- Firewall settings
+- Port availability
+
+---
+
 ## Commands
 
 ### LTC (Latency Test Command)
